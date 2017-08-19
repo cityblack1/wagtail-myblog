@@ -1,0 +1,15 @@
+{% load wagtailcore_tags %}
+
+{% if ancestors %}
+  <ol class="breadcrumb" style="background-color:#ffffff;padding:0px 130px">
+      <li><a href="{% slugurl 'home' %}">首页</a></li>
+
+    {% for ancestor in ancestors %}
+      {% if forloop.last %}
+        <li class="active">{{ ancestor }}</li>
+      {% else %}
+        <li><a href="{% pageurl ancestor %}">{{ ancestor }}</a></li>
+      {% endif %}
+    {% endfor %}
+  </ol>
+{% endif %}

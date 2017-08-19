@@ -1,0 +1,40 @@
+{% extends 'home/base.html' %}
+
+{% block custom_js %}
+    {% if message %}
+    <script>
+        alert("提交成功")
+    </script>
+    {% endif %}
+{% endblock %}
+{% block content %}
+    		<div class="content-body">
+			<div class="container">
+				<div class="row">
+					<main class="col-md-12">
+						<h1 class="page-title">联系我</h1>
+                        <h4>{{ contact_form.errors }}</h4>
+						<article class="post">
+							<div class="entry-content clearfix">
+								<form action="{% url 'comment:contact_me' %}" method="post" class="contact-form">
+									<div class="row">
+										<div class="col-md-6 col-md-offset-3">
+											<input type="text" name="name" placeholder="Name" id="jsdname" required>
+											<input type="email" name="email" placeholder="Email" id="jsemail" required>
+											<input type="text" name="subject" placeholder="Subject" id="jssubject">
+											<textarea name="message" rows="7" placeholder="Your Message" id="jsmessage" required></textarea>
+                                            {% csrf_token %}
+                                            <button id="jsContact" value="提交" class="btn-send btn-5 btn-5b ion-ios-paperplane"><span>提交</span></button>
+										</div>
+									</div>	<!-- row -->
+								</form>
+							</div>
+						</article>
+					</main>
+				</div>
+			</div>
+		</div>
+
+
+
+{% endblock %}

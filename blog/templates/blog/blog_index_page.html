@@ -1,0 +1,49 @@
+{% extends 'home/base.html' %}
+{% load wagtailcore_tags pagination_tags %}
+
+{% block content %}
+    		<div class="content-body">
+			<div class="container">
+				<div class="row">
+					<main class="col-md-12">
+                        {% autopaginate blogs 4 %}
+                        {% for blog in blogs %}
+						<article class="post post-1">
+							<header class="entry-header">
+								<h1 class="entry-title">
+									<a href="{% pageurl blog %}">{{ blog.title }}</a>
+								</h1>
+								<div class="entry-meta">
+									<span class="post-category"><a href="{% pageurl blog.parent %}">{{ blog.parent.title }}</a></span>
+
+									<span class="post-date"><a href="#"><time class="entry-date">{{ blog.date|date:'Y年n月j日' }}</time></a></span>
+
+									<span class="post-author"><a href="#">{{ request.user.username }}</a></span>
+
+									<span class="comments-link"><a href="">{{ blog.comment_set.all.count }} 评论</a></span>
+								</div>
+							</header>
+							<div class="entry-content clearfix">
+                                {% if blog.body.raw_text %}
+                                    {{ blog.body.raw_text|safe|striptags|truncatewords_html:'30' }}
+                                {% else %}
+                                    {% filter truncatewords_html:'50'%}
+
+                                        {% include "blog/includes/streamfield.html" with content=blog.body %}                    </div>
+
+{#                                      {% include "blog/includes/streamfield2.html" with content=blog.body %}#}
+                                    {% endfilter %}
+                                {% endif %}
+                                <div class="read-more cl-effect-14">
+									<a href="#" class="more-link">继续阅读 <span class="meta-nav">→</span></a>
+								</div>
+							</div>
+						</article>
+                        {% endfor %}
+                    {% paginate %}
+					</main>
+				</div>
+			</div>
+		</div>
+
+{% endblock %}

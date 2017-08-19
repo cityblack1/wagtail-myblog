@@ -1,0 +1,130 @@
+{% extends 'home/base.html' %}
+{% load wagtailcore_tags static %}
+{% block content %}
+    <div class="content-body">
+    <div class="container">
+        <div class="row">
+            <main class="col-md-9"{% if fullwidth %} style="width: 100%" {% endif %}>
+                <article class="post post-1">
+                    <header class="entry-header">
+                        <h1 class="entry-title">{{ page.title }}</h1>
+                        <div class="entry-meta">
+                            <span class="post-category"><a href="{% pageurl page.parent %}">{{ page.parent.title }}</a></span>
+                            <span class="post-date"><a><time class="entry-date" datetime="2012-11-09T23:15:57+00:00">{{ page.date|date:'Y年n月j日' }}</time></a></span>
+                            <span class="post-author"><a>{{ request.user.username }}</a></span>
+                            <span class="comments-link"><a href="#comment">4 评论</a></span>
+                            <span class="comments-link"><a href="{% slugurl page.slug %}{% ifequal fullwidth '' %}?fullwidth=true{% endifequal %}">{% if fullwidth == 'true' %}取消全框{% else %}全框显示{% endif %}</a></span>
+                            <span class="views-count"><a>阅读:{{ self.read_times }}</a></span>
+
+                        </div>
+                    </header>
+
+                    <div class="entry-content clearfix">
+                            {% if page.body.raw_text %}
+                            {{ page.body.raw_text|safe }}
+                            {% else %}
+                            {% include "blog/includes/streamfield.html" with content=page.body %}                    </div>
+                            {% endif %}
+                </article>
+                <section class="comment-area" id="comment-area">
+                    <hr>
+                    <h3>发表评论</h3>
+                    <form action="{% url 'comment:blog_comment' page.slug %}" method="post" class="comment-form">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="id_name">名字：</label>
+                                <input type="text" id="id_name" name="name" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="id_email">邮箱：</label>
+                                <input type="email" id="id_email" name="email" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="id_url">网址：</label>
+                                <input type="text" id="id_url" name="url">
+                            </div>
+                            <div class="col-md-12">
+                                <label for="id_comment">评论：</label>
+                                <textarea name="comment" id="id_comment" required></textarea>
+                                <button type="submit" class="comment-btn">发表</button>
+                            </div>
+                        </div>    <!-- row -->
+                        {% csrf_token %}
+                    </form>
+                    <a name="comment"></a>
+                    <div class="comment-list-panel">
+                        <h3>评论列表，共 <span>{{ comments.count }}</span> 条评论</h3>
+                        <ul class="comment-list list-unstyled">
+                            {% for comment in comments %}
+                            <li class="comment-item">
+                                <span class="nickname">{{ comment.name }}</span>
+                                <time class="submit-date" datetime="2012-11-09T23:15:57+00:00">{{ comment.date|date:'Y年n月j日 H:i' }}</time>
+                                <div class="text">
+                                    {{ comment.comment }}
+                                </div>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </section>
+            </main>
+            {% if not fullwidth %}
+            <aside class="col-md-3">
+                {% with blogs as new_blogs %}
+
+                <div class="widget widget-recent-posts">
+                    <h3 class="widget-title">最新文章</h3>
+                    <ul>
+                        {% for blog in new_blogs|slice:':5' %}
+                        <li>
+                            <a href="{% pageurl blog %}">{{ blog.title }}</a>{{ slugurl }}
+                        </li>
+                        {% endfor %}
+                {% endwith %}
+
+                    </ul>
+                </div>
+                <div class="widget widget-archives">
+                    <h3 class="widget-title">归档</h3>
+                    <ul>
+                        {% for date_category in date_categories %}
+                        <li>
+                            <a href="{% slugurl 'test' %}?date={{ date_category.first.date|date:'Y-n' }}">{{ date_category.first.date|date:'Y 年 n 月' }}&nbsp;&nbsp;&nbsp;(&nbsp;{{ date_category.all.count }}&nbsp;)</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="widget widget-category">
+                    <h3 class="widget-title">分类</h3>
+                    <ul>
+                        {% for category in blog_index %}
+                            {% if not category.slug == 'index' %}
+
+                        <li>
+                            <a href="{% pageurl category %}"><span class="post-count">{% autoescape off %}{{ category.title }}{% endautoescape %}&nbsp;&nbsp;({{ category.get_descendants.all.count }})</span></a>
+                        </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="widget widget-tag-cloud">
+                    <h3 class="widget-title">标签云</h3>
+                    <ul>
+                        {% for tag in tags_list %}
+                        <li>
+                            <a href="{% slugurl 'test' %}?tag={{ tag }}">{{ tag }}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="rss">
+                    <a href=""><span class="ion-social-rss-outline"></span> RSS 订阅</a>
+                </div>
+            </aside>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

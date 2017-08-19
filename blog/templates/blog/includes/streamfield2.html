@@ -1,0 +1,7 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+
+<div class="stream-field">
+    {% for child in content %}
+        <p>{{ child }}</p>
+    {% endfor %}
+</div>

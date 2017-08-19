@@ -1,0 +1,111 @@
+{% extends "home/base.html" %}
+{% load custom_tags %}
+{% load wagtailcore_tags static %}
+{% load pagination_tags %}
+
+
+{% block content %}
+    <style>
+    .pagination{
+        text-align: center;
+    }
+    </style>
+
+    <div class="content-body">
+
+    <div class="container">
+        <div class="row">
+            <main class="col-md-9">
+                {% with blogs as new_blogs %}
+                {% autopaginate blogs 5 %}
+
+                {% for blog in blogs %}
+                <article class="post post-{{ forloop.counter }}">
+                    <header class="entry-header">
+                        <h1 class="entry-title">
+                            <a href="{% pageurl blog %}">{{ blog.title }}</a>
+                        </h1>
+                        <div class="entry-meta">
+                            <span class="post-category"><a href="{% pageurl blog.parent %}">{{ blog.parent.specific.title }}</a></span>
+                            <span class="post-date"><a href="#"><time class="entry-date">{{ blog.date|date:'Y年n月j日' }}</time></a></span>
+                            <span class="post-author"><a href="#">作者：{{ request.user.username }}</a></span>
+                            <span class="comments-link"><a href="#">4 评论</a></span>
+                            <span class="views-count"><a href="#">{{ blog.read_times }} 阅读</a></span>
+                        </div>
+                    </header>
+                    <div class="entry-content clearfix">
+                        {% if blog.body.raw_text %}
+                            {{ blog.body.raw_text|safe|striptags|truncatewords_html:'5' }}
+                        {% else %}
+                            {% filter truncatewords_html:'20'%}
+                                {% include "blog/includes/streamfield.html" with content=blog.body %}                    </div>
+                            {% endfilter %}
+                        {% endif %}
+                        <div class="read-more cl-effect-14">
+                            <a href="#" class="more-link">继续阅读 <span class="meta-nav">→</span></a>
+                        </div>
+                    </div>
+                </article>
+                {% endfor %}
+
+                {% paginate %}
+
+            </main>
+            <aside class="col-md-3">
+                <div class="widget widget-recent-posts">
+                    <h3 class="widget-title">最新文章</h3>
+                    <ul>
+                        {% for blog in new_blogs|slice:':5' %}
+                        <li>
+                            <a href="{% pageurl blog %}">{{ blog.title }}</a>
+                        </li>
+                        {% endfor %}
+                {% endwith %}
+
+                    </ul>
+                </div>
+                <div class="widget widget-archives">
+                    <h3 class="widget-title">归档</h3>
+                    <ul>
+                        {% for date_category in date_categories %}
+                        <li>
+                            <a href="{% slugurl 'test' %}?date={{ date_category.first.date|date:'Y-n' }}">{{ date_category.first.date|date:'Y 年 n 月' }}&nbsp;&nbsp;&nbsp;(&nbsp;{{ date_category.all.count }}&nbsp;)</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="widget widget-category">
+                    <h3 class="widget-title">分类</h3>
+                    <ul>
+                        {% for category in blog_index %}
+                            {% if not category.slug == 'index' %}
+                        <li>
+                            <a href="{% pageurl category %}"><span class="post-count">{% autoescape off %}{{ category.title }}{% endautoescape %}&nbsp;&nbsp;({{ category.get_descendants.all.count }})</span></a>
+                        </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="widget widget-tag-cloud">
+                    <h3 class="widget-title">标签云</h3>
+                    <ul>
+                        {% for tag in tags_list %}
+                        <li>
+                            <a href="{% slugurl 'test' %}?tag={{ tag }}">{{ tag }}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="rss">
+                    <a href=""><span class="ion-social-rss-outline"></span> RSS 订阅</a>
+                </div>
+            </aside>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
