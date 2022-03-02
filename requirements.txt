@@ -43,7 +43,7 @@ rcssmin==1.0.6
 redis==2.10.5
 requests==2.18.3
 rjsmin==1.0.12
-Scrapy==1.4.0
+Scrapy==1.8.2
 service-identity==17.0.0
 six==1.10.0
 Twisted==17.5.0
