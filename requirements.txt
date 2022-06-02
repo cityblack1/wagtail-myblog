@@ -20,7 +20,7 @@ django-taggit==0.22.1
 django-treebeard==4.1.2
 djangorestframework==3.6.3
 elasticsearch==1.2.0
-html5lib==0.999999
+html5lib==0.99999999
 hyperlink==17.3.0
 idna==2.5
 incremental==17.5.0
