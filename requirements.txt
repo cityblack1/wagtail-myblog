@@ -46,7 +46,7 @@ rjsmin==1.0.12
 Scrapy==1.4.0
 service-identity==17.0.0
 six==1.10.0
-Twisted==17.5.0
+Twisted==22.10.0
 Unidecode==0.4.21
 urllib3==1.22
 uWSGI==2.0.15
